@@ -1,10 +1,10 @@
-ame-template: 'Release {version}'
+name-template: 'Release {version}'
 tag-template: '$VERSION'
 template: |
   ## Release Notes for {version}
   $CHANGES
 
-  
+
 # name-template: 'Release {version}'
 # tag-template: '$VERSION'
 # template: |
