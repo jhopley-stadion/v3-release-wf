@@ -87,16 +87,37 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
       - name: Wait for Release Notes to be Drafted
-        run: sleep 30 # Adjust if needed to ensure notes are drafted
+        run: sleep 10 # Adjust if needed to ensure notes are drafted
 
-      - name: Create Release
+      - name: Update Release Draft with Notes
+        id: update_release_draft
         run: |
-          echo "Creating release..."
-          notes=$(gh release view ${{ env.new_tag }} --json body --jq '.body' 2>/dev/null || echo "No notes found")
-          gh release create ${{ env.new_tag }} --title "Release ${{ env.new_tag }}" --target main --notes "$notes"
-          echo "Release created: ${{ env.new_tag }}"
+          release_id=$(gh release view ${{ env.new_tag }} --json id --jq '.id')
+          if [ -z "$release_id" ]; then
+            echo "No release draft found with tag ${{ env.new_tag }}"
+            exit 1
+          fi
+          echo "Updating release draft with notes..."
+          gh release edit $release_id --notes "$(gh release view ${{ env.new_tag }} --json body --jq '.body')" --title "Release ${{ env.new_tag }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish Release
+        id: publish_release
+        run: |
+          gh release edit ${{ env.new_tag }} --draft=false
+          echo "Release published: ${{ env.new_tag }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: Create Release
+      #   run: |
+      #     echo "Creating release..."
+      #     notes=$(gh release view ${{ env.new_tag }} --json body --jq '.body' 2>/dev/null || echo "No notes found")
+      #     gh release create ${{ env.new_tag }} --title "Release ${{ env.new_tag }}" --target main --notes "$notes"
+      #     echo "Release created: ${{ env.new_tag }}"
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Rebase develop with main for hotfixes
         if: env.branch_type == 'hotfix'
