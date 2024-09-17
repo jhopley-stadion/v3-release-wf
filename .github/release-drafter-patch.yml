@@ -1,5 +1,5 @@
 name-template: 'Hotfix {version}'
-tag-template: '$VERSION'
+tag-template: '$NEXT_PATCH_VERSION'
 template: |
   ## Release Notes for {version}
   $CHANGES
