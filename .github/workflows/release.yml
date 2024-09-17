@@ -110,7 +110,7 @@ jobs:
           notes=$(gh release view ${{ env.new_tag }} --json body --jq '.body' || echo "No notes found")
           echo "Notes: $notes"
           
-          gh release edit $release_id --notes "$notes" --title "Release ${{ env.new_tag }}"
+          gh release edit ${{ env.new_tag }} --notes "$notes" --title "Release ${{ env.new_tag }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
