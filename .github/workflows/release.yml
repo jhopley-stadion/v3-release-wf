@@ -84,26 +84,26 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Wait for Release Notes to be Drafted
-        run: sleep 30 # Adjust if needed to ensure notes are drafted
+      # - name: Wait for Release Notes to be Drafted
+      #   run: sleep 5 # Adjust if needed to ensure notes are drafted
 
-      - name: Create Release
-        run: |
-          echo "Creating release..."
-          notes=$(gh release view ${{ env.new_tag }} --json body --jq '.body' 2>/dev/null || echo "No notes found")
-          gh release create ${{ env.new_tag }} --title "Release ${{ env.new_tag }}" --target main --notes "$notes"
-          echo "Release created: ${{ env.new_tag }}"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Create Release
+      #   run: |
+      #     echo "Creating release..."
+      #     notes=$(gh release view ${{ env.new_tag }} --json body --jq '.body' 2>/dev/null || echo "No notes found")
+      #     gh release create ${{ env.new_tag }} --title "Release ${{ env.new_tag }}" --target main --notes "$notes"
+      #     echo "Release created: ${{ env.new_tag }}"
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Rebase develop with main for hotfixes
-        if: env.branch_type == 'hotfix'
-        run: |
-          echo "Rebasing develop with main..."
-          git config --global user.email "actions@github.com"
-          git config --global user.name "GitHub Actions"
-          git fetch origin develop
-          git checkout develop
-          git rebase origin/main
-          git push origin develop --force-with-lease
-          echo "Rebase complete and pushed"
+      # - name: Rebase develop with main for hotfixes
+      #   if: env.branch_type == 'hotfix'
+      #   run: |
+      #     echo "Rebasing develop with main..."
+      #     git config --global user.email "actions@github.com"
+      #     git config --global user.name "GitHub Actions"
+      #     git fetch origin develop
+      #     git checkout develop
+      #     git rebase origin/main
+      #     git push origin develop --force-with-lease
+      #     echo "Rebase complete and pushed"

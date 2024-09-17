@@ -1,4 +1,4 @@
-ame-template: 'Hotfix {version}'
+name-template: 'Hotfix {version}'
 tag-template: '$VERSION'
 template: |
   ## Release Notes for {version}
