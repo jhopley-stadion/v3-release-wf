@@ -55,20 +55,25 @@ jobs:
           echo "Incrementing version based on branch type..."
           IFS='.' read -r major minor patch <<< "${{ env.latest_tag }}"
           echo "Current version: $major.$minor.$patch"
-          if [[ "${{ env.branch_type }}" == "release" ]]; then
+          if [[ "${{ env.latest_tag }}" == "" ]]; then
+            # If no tags exist yet, start with version 1.0.0
+            major=1
+            minor=0
+            patch=0
+          elif [[ "${{ env.branch_type }}" == "release" ]]; then
             minor=$((minor + 1))
-            new_tag="$major.$minor.0"
+            patch=0
           elif [[ "${{ env.branch_type }}" == "hotfix" ]]; then
             patch=$((patch + 1))
-            new_tag="$major.$minor.$patch"
           else
             echo "Unknown branch type"
             exit 1
           fi
+          new_tag="$major.$minor.$patch"
           echo "New tag calculated: $new_tag"
           echo "new_tag=$new_tag" >> $GITHUB_ENV
 
-      - name: Draft Release Notes
+      - name: Draft Release Notes (Minor or Patch)
         uses: release-drafter/release-drafter@v5
         with:
           config-name: ${{ env.config_file }}
