@@ -22,7 +22,7 @@ jobs:
         id: get_latest_version
         run: |
           echo "Fetching latest tag..."
-          latest_tag=$(gh release list --limit 1 --json tagName --jq '.[0].tagName' || echo "v1.0.0")
+          latest_tag=$(gh release list --limit 1 --json tagName --jq '.[0].tagName' || echo "1.0.0")
           echo "Latest tag is: $latest_tag"
           echo "latest_tag=$latest_tag" >> $GITHUB_ENV
         env:
@@ -53,18 +53,14 @@ jobs:
         id: increment_version
         run: |
           echo "Incrementing version based on branch type..."
-          latest_tag=${{ env.latest_tag }}
-          # Remove leading 'v' if present
-          latest_tag=${latest_tag#v}
-          IFS='.' read -r major minor patch <<< "${latest_tag}"
+          IFS='.' read -r major minor patch <<< "${{ env.latest_tag }}"
           echo "Current version: $major.$minor.$patch"
           if [[ "${{ env.branch_type }}" == "release" ]]; then
             minor=$((minor + 1))
-            patch=0
-            new_tag="v$major.$minor.$patch"
+            new_tag="$major.$minor.0"
           elif [[ "${{ env.branch_type }}" == "hotfix" ]]; then
             patch=$((patch + 1))
-            new_tag="v$major.$minor.$patch"
+            new_tag="$major.$minor.$patch"
           else
             echo "Unknown branch type"
             exit 1
@@ -75,7 +71,7 @@ jobs:
       - name: Draft Release Notes
         uses: release-drafter/release-drafter@v5
         with:
-          config-name: ${{ env.config_file }}  # Use correct drafter file based on branch type
+          config-name: ${{ env.config_file }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
