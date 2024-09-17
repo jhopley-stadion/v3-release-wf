@@ -89,16 +89,28 @@ jobs:
       - name: Wait for Release Notes to be Drafted
         run: sleep 10 # Adjust if needed to ensure notes are drafted
 
-      - name: Update Release Draft with Notes
-        id: update_release_draft
+      - name: List All Releases
         run: |
-          release_id=$(gh release view ${{ env.new_tag }} --json id --jq '.id')
-          if [ -z "$release_id" ]; then
+          gh release list
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check and Update Release Draft
+        run: |
+          echo "Checking if release draft exists for tag ${{ env.new_tag }}..."
+          release_id=$(gh release view ${{ env.new_tag }} --json id --jq '.id' || echo "not found")
+          echo "Release ID: $release_id"
+          
+          if [ "$release_id" = "not found" ]; then
             echo "No release draft found with tag ${{ env.new_tag }}"
             exit 1
           fi
+      
           echo "Updating release draft with notes..."
-          gh release edit $release_id --notes "$(gh release view ${{ env.new_tag }} --json body --jq '.body')" --title "Release ${{ env.new_tag }}"
+          notes=$(gh release view ${{ env.new_tag }} --json body --jq '.body' || echo "No notes found")
+          echo "Notes: $notes"
+          
+          gh release edit $release_id --notes "$notes" --title "Release ${{ env.new_tag }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
