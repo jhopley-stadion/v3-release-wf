@@ -1,0 +1,27 @@
+name-template: 'Hotfix {version}'
+tag-template: '$VERSION'
+template: |
+  ## Patch Release Notes for {version}
+  
+  **Release Date:** $RELEASE_DATE
+  
+  ### 🐛 Fixes
+  $FIXES
+  
+  ### 🔄 Improvements
+  $IMPROVEMENTS
+  
+  ### 📜 Other Changes
+  $OTHER_CHANGES
+  
+  ### 🙏 Thanks to Contributors
+  $CONTRIBUTORS
+
+categories:
+  - title: Fixes 🐛
+    labels:
+      - bug
+      - fix
+  - title: Other Changes
+    labels:
+      - "*"
