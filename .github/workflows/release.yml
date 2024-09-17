@@ -76,12 +76,12 @@ jobs:
           echo "New tag calculated: $new_tag"
           echo "new_tag=$new_tag" >> $GITHUB_ENV
 
-          - name: Draft Release Notes (Minor or Patch)
-          uses: release-drafter/release-drafter@v5
-          with:
-            config-name: ${{ env.config_file }}  # Use correct drafter file based on branch type
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Draft Release Notes (Minor or Patch)
+        uses: release-drafter/release-drafter@v5
+        with:
+          config-name: ${{ env.config_file }}  # Use correct drafter file based on branch type
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
       - name: Wait for Release Notes to be Drafted
         run: sleep 30 # Adjust if needed to ensure notes are drafted
